@@ -233,7 +233,11 @@ void testApp::draw() {
 void testApp::drawPointCloud() {
 	int w = 640;
 	int h = 480;
+
     int distance = 0;
+    int sum = 0;
+    int average = 0;
+
 	ofMesh mesh;
 	mesh.setMode(OF_PRIMITIVE_POINTS);
 	int step = 2;
@@ -241,26 +245,27 @@ void testApp::drawPointCloud() {
 		for(int x = 0; x < w; x += step) {
 			if(kinect.getDistanceAt(x, y) > 0) {
                 distance = kinect.getDistanceAt(x, y);
-                if ((x == 300) && (y == 200)) {
-                    
-                    if(distance < 1000) {
-                        drone.controller.takeOff(!drone.state.isTakingOff(), 3000); break;
 
-                        //drone.controller.pitchAmount = 0;
+                sum += distance;
 
-                    }else {
-                        drone.controller.land(!drone.state.isLanding(), 3000); break;
-                    }
-                    ofLogNotice() << distance;
-                }
 				mesh.addColor(kinect.getColorAt(x,y));
 				mesh.addVertex(kinect.getWorldCoordinateAt(x, y));
 			}
 		}
 	}
+
+    average = sum / ((h*w)/2);
+    ofLogNotice() << "Average distance: " << average;
+    
+    if(average < 500) {
+        drone.controller.takeOff(!drone.state.isTakingOff(), 3000);
+    }else if(average > 700) {
+        drone.controller.land(!drone.state.isLanding(), 3000);
+    }
+
 	glPointSize(3);
 	ofPushMatrix();
-	// the projected points are 'upside down' and 'backwards' 
+	// the projected points are 'upside down' and 'backwards'
 	ofScale(1, -1, -1);
 	ofTranslate(0, 0, -1000); // center the points a bit
 	ofEnableDepthTest();
