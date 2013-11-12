@@ -248,17 +248,6 @@ void testApp::drawPointCloud() {
 
                 all += distance;
 
-                //average = all / ((x*y)/2);
-                //ofLogNotice() << "Average distance: " << average;
-
-                /*
-                if(average < 500) {
-                    drone.controller.takeOff(!drone.state.isTakingOff(), 3000); break;
-                }else if(average > 700) {
-                    drone.controller.land(!drone.state.isLanding(), 3000); break;
-                }
-                */
-
 				mesh.addColor(kinect.getColorAt(x,y));
 				mesh.addVertex(kinect.getWorldCoordinateAt(x, y));
 			}
