@@ -234,8 +234,8 @@ void testApp::drawPointCloud() {
 	int w = 640;
 	int h = 480;
 
+    int all = 500;
     int distance = 0;
-    int sum = 0;
     int average = 0;
 
 	ofMesh mesh;
@@ -246,22 +246,36 @@ void testApp::drawPointCloud() {
 			if(kinect.getDistanceAt(x, y) > 0) {
                 distance = kinect.getDistanceAt(x, y);
 
-                sum += distance;
+                all += distance;
+
+                //average = all / ((x*y)/2);
+                //ofLogNotice() << "Average distance: " << average;
+
+                /*
+                if(average < 500) {
+                    drone.controller.takeOff(!drone.state.isTakingOff(), 3000); break;
+                }else if(average > 700) {
+                    drone.controller.land(!drone.state.isLanding(), 3000); break;
+                }
+                */
 
 				mesh.addColor(kinect.getColorAt(x,y));
 				mesh.addVertex(kinect.getWorldCoordinateAt(x, y));
 			}
 		}
 	}
-
-    average = sum / ((h*w)/2);
-    ofLogNotice() << "Average distance: " << average;
+    
+    average = all / ((h*w)/2);
     
     if(average < 500) {
-        drone.controller.takeOff(!drone.state.isTakingOff(), 3000);
-    }else if(average > 700) {
-        drone.controller.land(!drone.state.isLanding(), 3000);
+        drone.controller.takeOff(!drone.state.isTakingOff(), 1000);
+        sleep(0.3);
+    }else if(average > 600) {
+        drone.controller.land(!drone.state.isLanding(), 1000);
+        sleep(0.3);
     }
+
+    ofLogNotice() << "Average distance: " << average;
 
 	glPointSize(3);
 	ofPushMatrix();
